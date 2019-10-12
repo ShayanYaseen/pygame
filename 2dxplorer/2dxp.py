@@ -18,6 +18,7 @@ class knight(object):
         self.idle=True
         self.up=False
         self.down=False
+        self.health=100
         self.spr_walk_r=[pgm.transform.scale(pgm.image.load("png\\Walk ({}).png".format(x)),(64,64)) for x in range(1,11)]
         self.spr_walk_l=[pgm.transform.flip(x,1,0) for x in self.spr_walk_r]
         self.spr_idl_r=[pgm.transform.scale(pgm.image.load("png\\Idle ({}).png".format(x)),(64,64)) for x in range(1,11)]
@@ -37,6 +38,10 @@ class knight(object):
             else:
                 win.blit(self.spr_walk_r[self.framecount//3],(self.x,self.y))
         self.framecount+=1
+        pgm.draw.rect(win,(0,0,0),(dispw-82,6,74,12))
+        if self.health>0:
+           pgm.draw.rect(win,(255,0,0),(dispw-80,7,70*self.health/100,10))
+
 
     def sprite_update(self,l,r,i):
         self.left=l
