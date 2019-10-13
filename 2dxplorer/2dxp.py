@@ -19,9 +19,9 @@ class knight(object):
         self.up=False
         self.down=False
         self.health=100
-        self.spr_walk_r=[pgm.transform.scale(pgm.image.load("png\\Walk ({}).png".format(x)),(64,64)) for x in range(1,11)]
+        self.spr_walk_r=[pgm.transform.scale(pgm.image.load('./png/Walk ({}).png'.format(x)),(64,64)) for x in range(1,11)]
         self.spr_walk_l=[pgm.transform.flip(x,1,0) for x in self.spr_walk_r]
-        self.spr_idl_r=[pgm.transform.scale(pgm.image.load("png\\Idle ({}).png".format(x)),(64,64)) for x in range(1,11)]
+        self.spr_idl_r=[pgm.transform.scale(pgm.image.load('./png/Idle ({}).png'.format(x)),(64,64)) for x in range(1,11)]
         self.spr_idl_l=[pgm.transform.flip(x,1,0) for x in self.spr_idl_r]
 
     def draw(self,win):
@@ -58,7 +58,7 @@ dispw=832
 disph=704
 win=pgm.display.set_mode((dispw,disph))
 pgm.display.set_caption("Legend of Gagan")
-bg=pgm.image.load("png\\GrassTileset.png")
+bg=pgm.image.load('./png/GrassTileset.png')
 p1=knight(300,300,64,64)
 clock=pgm.time.Clock()
 
