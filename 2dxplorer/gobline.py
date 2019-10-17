@@ -18,7 +18,7 @@ class goblin_str(object):
         self.y=y
         self.width=30
         self.height=51
-        self.vel=2
+        self.vel=4
         self.framecount=0
         self.left=False
         self.right=False
@@ -26,15 +26,21 @@ class goblin_str(object):
         self.down=False
         self.idle=True
         self.health=100
+        self.atkcount=0
+        self.isatk=False
         self.spr_walk_r=[pgm.image.load('./enemies/goblin_str/walk_right/{}.png'.format(x)) for x in range(9)]
         self.spr_walk_l=[pgm.image.load('./enemies/goblin_str/walk_left/{}.png'.format(x)) for x in range(9)]
         self.spr_walk_u=[pgm.image.load('./enemies/goblin_str/walk_up/{}.png'.format(x)) for x in range(9)]
         self.spr_walk_d=[pgm.image.load('./enemies/goblin_str/walk_down/{}.png'.format(x)) for x in range(9)]
+        self.atk_d=[pgm.image.load('./enemies/goblin_str/atk_down/{}.png'.format(x)) for x in range(6)]
+        self.atk_u=[pgm.image.load('./enemies/goblin_str/atk_up/{}.png'.format(x)) for x in range(6)]
+        self.atk_l=[pgm.image.load('./enemies/goblin_str/atk_left/{}.png'.format(x)) for x in range(6)]
+        self.atk_r=[pgm.image.load('./enemies/goblin_str/atk_right/{}.png'.format(x)) for x in range(6)]
 
     def draw(self,win):
         if self.idle:
             win.blit(self.spr_walk_d[0], (self.x, self.y))
-        else:
+        elif not self.isatk:
             if self.framecount+1>=24:
                 self.framecount=0
             if self.left:
@@ -46,6 +52,23 @@ class goblin_str(object):
             else:
                 win.blit(self.spr_walk_d[self.framecount//3], (self.x, self.y))
             self.framecount+=1
+        if self.isatk:
+            if self.atkcount==15:
+                self.isatk=0
+                self.atkcount=0
+                self.draw(win)
+            else:
+                if self.left:
+                    win.blit(self.atk_l[self.atkcount//3], (self.x+self.width-self.atk_l[self.atkcount//3].get_width(), self.y))
+                elif self.right:
+                    win.blit(self.atk_r[self.atkcount//3], (self.x, self.y))
+                elif self.up:
+                    win.blit(self.atk_u[self.atkcount//3], (self.x, self.y+self.height-self.atk_u[self.atkcount//3].get_height()))
+                else:
+                    win.blit(self.atk_d[self.atkcount//3], (self.x, self.y))
+                self.atkcount+=1
+
+
 
     def sprite_update(self,l,r,u,d,i):
         self.left=l
@@ -57,19 +80,33 @@ class goblin_str(object):
     def chase(self,p1):
         hor=p1.x-self.x
         ver=p1.y-self.y
-        angle=math.atan(ver/hor)
-        if ver<0:
-            self.y-=self.vel*math.fabs(math.sin(angle))
-            self.sprite_update(0,0,1,0,0)
+        if math.fabs(hor)<5:
+            hor=0
+            angle=math.pi/2
+        elif math.fabs(ver)<5:
+            ver=0
+            angle=math.atan(ver/hor)
         else:
-            self.y+=self.vel*math.fabs(math.sin(angle))
-            self.sprite_update(0,0,0,1,0)
-        if hor<0:
-            self.x-=self.vel*math.fabs(math.cos(angle))
-            self.sprite_update(1,0,0,0,0)
-        else:
-            self.x+=self.vel*math.fabs(math.cos(angle))
-            self.sprite_update(0,1,0,0,0)
+            angle=math.atan(ver/hor)
+        if math.fabs(hor)<50 and ver==0 or math.fabs(ver)<25 and hor==0:
+            self.isatk=1
+        if not self.isatk:
+            if ver<0:
+                self.y-=self.vel*math.fabs(math.sin(angle))
+                self.sprite_update(0,0,1,0,0)
+            else:
+                self.y+=self.vel*math.fabs(math.sin(angle))
+                self.sprite_update(0,0,0,1,0)
+            if hor<0:
+                self.x-=self.vel*math.fabs(math.cos(angle))
+                self.sprite_update(1,0,0,0,0)
+            elif hor==0:
+                pass
+            else:
+                self.x+=self.vel*math.fabs(math.cos(angle))
+                self.sprite_update(0,1,0,0,0)
+
+
 
 class knight(object):
     def __init__(self, x, y, width, height):
@@ -89,12 +126,12 @@ class knight(object):
         self.health = 100
         # defined the sprites update for animation while walking right and left
         self.spr_walk_r = [pgm.transform.scale(pgm.image.load(
-            './png/Walk ({}).png'.format(x)), (64, 64)) for x in range(1, 11)]
+            './png/Walk ({}).png'.format(x)), (width, height)) for x in range(1, 11)]
         self.spr_walk_l = [pgm.transform.flip(
             x, 1, 0) for x in self.spr_walk_r]
         # defined the sprites update for animation while staying idle at right and left
         self.spr_idl_r = [pgm.transform.scale(pgm.image.load(
-            './png/Idle ({}).png'.format(x)), (64, 64)) for x in range(1, 11)]
+            './png/Idle ({}).png'.format(x)), (width, height)) for x in range(1, 11)]
         self.spr_idl_l = [pgm.transform.flip(
             x, 1, 0) for x in self.spr_idl_r]
 
@@ -132,6 +169,9 @@ class knight(object):
 def redrawgamewindow():
     win.fill(black)
     e1.draw(win)
+    if e1.atkcount==4:
+        if e1.x<p1.x<e1.x+e1.width or e1.y<p1.y<e1.y+e1.height:
+            p1.health-=10
     p1.draw(win)
     pgm.display.update()
 
@@ -171,7 +211,7 @@ def game_loop():
 
 
 e1=goblin_str(800,800)
-p1 = knight(100, 100, 64, 64)
+p1 = knight(100, 100, 30, 51)
 
 clock=pgm.time.Clock()
 game_loop()
