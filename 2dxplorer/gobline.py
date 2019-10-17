@@ -28,6 +28,7 @@ class goblin_str(object):
         self.health=100
         self.atkcount=0
         self.isatk=False
+        self.curframe=None
         self.spr_walk_r=[pgm.image.load('./enemies/goblin_str/walk_right/{}.png'.format(x)) for x in range(9)]
         self.spr_walk_l=[pgm.image.load('./enemies/goblin_str/walk_left/{}.png'.format(x)) for x in range(9)]
         self.spr_walk_u=[pgm.image.load('./enemies/goblin_str/walk_up/{}.png'.format(x)) for x in range(9)]
@@ -59,12 +60,16 @@ class goblin_str(object):
                 self.draw(win)
             else:
                 if self.left:
+                    self.curframe=self.atk_l[self.atkcount//3]
                     win.blit(self.atk_l[self.atkcount//3], (self.x+self.width-self.atk_l[self.atkcount//3].get_width(), self.y))
                 elif self.right:
+                    self.curframe=self.atk_r[self.atkcount//3]
                     win.blit(self.atk_r[self.atkcount//3], (self.x, self.y))
                 elif self.up:
+                    self.curframe=self.atk_u[self.atkcount//3]
                     win.blit(self.atk_u[self.atkcount//3], (self.x, self.y+self.height-self.atk_u[self.atkcount//3].get_height()))
                 else:
+                    self.curframe=self.atk_d[self.atkcount//3]
                     win.blit(self.atk_d[self.atkcount//3], (self.x, self.y))
                 self.atkcount+=1
 
@@ -168,10 +173,14 @@ class knight(object):
         return (self.left, self.right, self.up, self.down, self.idle)
 def redrawgamewindow():
     win.fill(black)
-    e1.draw(win)
     if e1.atkcount==4:
-        if e1.x<p1.x<e1.x+e1.width or e1.y<p1.y<e1.y+e1.height:
+        if e1.x<p1.x<e1.x+e1.curframe.get_width() or e1.y<p1.y<e1.y+e1.curframe.get_height():
             p1.health-=10
+        elif e1.left:
+            if e1.x-e1.curframe.get_width()-e1.width<p1.x<e1.x:
+              p1.health-=10
+
+    e1.draw(win)
     p1.draw(win)
     pgm.display.update()
 
@@ -183,6 +192,9 @@ def game_loop():
             # If we pressed the quit button
             if event.type == pgm.QUIT:
                 run = False
+        if p1.health==0:
+            run=0
+            print("Game Over")
         keys = pgm.key.get_pressed()
         if keys[pgm.K_UP] and p1.y > p1.vel:
             # no animation for up therefore no sprite update
