@@ -18,7 +18,7 @@ class goblin_str(object):
         self.y=y
         self.width=30
         self.height=51
-        self.vel=4
+        self.vel=5
         self.framecount=0
         self.left=False
         self.right=False
@@ -174,11 +174,16 @@ class knight(object):
 def redrawgamewindow():
     win.fill(black)
     if e1.atkcount==4:
-        if e1.x<p1.x<e1.x+e1.curframe.get_width() or e1.y<p1.y<e1.y+e1.curframe.get_height():
-            p1.health-=10
-        elif e1.left:
+        if e1.left or e1.up:
             if e1.x-e1.curframe.get_width()-e1.width<p1.x<e1.x:
-              p1.health-=10
+              p1.health-=5
+            elif e1.y-e1.curframe.get_height()-e1.height<p1.y<e1.y:
+              p1.health-=5
+        if e1.right or e1.down:
+           if e1.x+e1.curframe.get_width()+e1.width>p1.x>e1.x:
+              p1.health-=5
+           elif e1.y+e1.curframe.get_height()+e1.height>p1.y>e1.y:
+              p1.health-=5
 
     e1.draw(win)
     p1.draw(win)
