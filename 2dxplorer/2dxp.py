@@ -227,8 +227,8 @@ class goblin_str(object):
         self.idle=i
 
     def chase(self,p1):
-        hor=p1.x-self.x
-        ver=p1.y-self.y
+        hor=p1.x+p1.width/2-self.x-self.height/2
+        ver=p1.y+p1.height/2-self.y-self.height/2
         if math.fabs(hor)<5:
             hor=0
             angle=math.pi/2
@@ -237,9 +237,13 @@ class goblin_str(object):
             angle=math.atan(ver/hor)
         else:
             angle=math.atan(ver/hor)
-        if math.fabs(hor)<50 and ver==0 or math.fabs(ver)<25 and hor==0:
+        if math.fabs(hor)<55 and ver==0 or math.fabs(ver)<50 and hor==0:
             self.isatk=1
         if not self.isatk:
+            if math.fabs(hor)<75 and math.fabs(ver)>75 and hor!=0:
+                self.x+=(hor/(math.fabs(hor)))*self.vel 
+            elif math.fabs(ver)<75 and math.fabs(hor)>75 and ver!=0:
+                self.y+=(ver/(math.fabs(ver)))*self.vel 
             if ver<0:
                 self.y-=self.vel*math.fabs(math.sin(angle))
                 self.sprite_update(0,0,1,0,0)
