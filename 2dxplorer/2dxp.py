@@ -83,22 +83,22 @@ class knight(object):
         self.aup = False
         self.adown = False
         # defined the sprites update for animation while walking right and left
-        self.spr_walk_r = [pygame.transform.scale(pygame.image.load('./player/movement/right/{}.png'.format(x)), (64, 64)) for x in range(1,10)]
+        self.spr_walk_r = [pygame.image.load('./player/movement/right/{}.png'.format(x)) for x in range(1,10)]
         self.spr_walk_l = [pygame.transform.flip(x, 1, 0) for x in self.spr_walk_r]
-        self.spr_walk_u = [pygame.transform.scale(pygame.image.load('./player/movement/up/{}.png'.format(x)), (64, 64)) for x in range(1, 10)]
-        self.spr_walk_d = [pygame.transform.scale(pygame.image.load('./player/movement/down/{}.png'.format(x)), (64, 64)) for x in range(1, 10)]
+        self.spr_walk_u = [pygame.image.load('./player/movement/up/{}.png'.format(x)) for x in range(1, 10)]
+        self.spr_walk_d = [pygame.image.load('./player/movement/down/{}.png'.format(x)) for x in range(1, 10)]
 
         # defined the sprites update for animation while staying idle at right and left
-        self.spr_idl_r = [pygame.transform.scale(pygame.image.load('./player/movement/right/{}.png'.format(x)), (64, 64)) for x in range(1, 10)]
+        self.spr_idl_r = [pygame.image.load('./player/movement/right/{}.png'.format(x)) for x in range(1, 10)]
         self.spr_idl_l = [pygame.transform.flip(x, 1, 0) for x in self.spr_idl_r]
-        self.spr_idl_u = [pygame.transform.scale(pygame.image.load('./player/movement/up/{}.png'.format(x)), (64, 64)) for x in range(1, 10)]
-        self.spr_idl_d = [pygame.transform.scale(pygame.image.load('./player/movement/down/{}.png'.format(x)), (64, 64)) for x in range(1, 10)]
+        self.spr_idl_u = [pygame.image.load('./player/movement/up/{}.png'.format(x)) for x in range(1, 10)]
+        self.spr_idl_d = [pygame.image.load('./player/movement/down/{}.png'.format(x)) for x in range(1, 10)]
 
         #attack
-        self.spr_walk_ar = [pygame.transform.scale(pygame.image.load('./player/attack/right/{}.png'.format(x)), (64, 64)) for x in range(1,6)]
-        self.spr_walk_al = [pygame.transform.scale(pygame.image.load('./player/attack/left/{}.png'.format(x)), (64, 64)) for x in range(1,6)]
-        self.spr_walk_au = [pygame.transform.scale(pygame.image.load('./player/attack/up/{}.png'.format(x)), (64, 64)) for x in range(1, 6)]
-        self.spr_walk_ad = [pygame.transform.scale(pygame.image.load('./player/attack/down/{}.png'.format(x)), (64, 64)) for x in range(1, 6)]
+        self.spr_walk_ar = [pygame.image.load('./player/attack/right/{}.png'.format(x)) for x in range(0,6)]
+        self.spr_walk_al = [pygame.image.load('./player/attack/left/{}.png'.format(x)) for x in range(0,6)]
+        self.spr_walk_au = [pygame.image.load('./player/attack/up/{}.png'.format(x)) for x in range(0, 6)]
+        self.spr_walk_ad = [pygame.image.load('./player/attack/down/{}.png'.format(x)) for x in range(0, 6)]
 
     def draw(self, win):
         # called by redraw game window will udate the character sprite
