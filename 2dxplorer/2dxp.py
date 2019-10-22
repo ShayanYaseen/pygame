@@ -125,16 +125,16 @@ class knight(object):
             #attack sprites
         elif self.isatk:
             if self.atkcount==15:
-                self.atkcount=0
+                self.atkcount=3
                 self.isatk=0
                 self.draw(win)
             else:
                 if self.left:
-                    win.blit(self.spr_walk_al[self.atkcount//3], (self.x+self.width-self.spr_walk_al[self.atkcount//3 +1].get_width(), self.y))
+                    win.blit(self.spr_walk_al[self.atkcount//3], (self.x+self.width-self.spr_walk_al[self.atkcount//3].get_width(), self.y+7.5))
                 elif self.right:
-                    win.blit(self.spr_walk_ar[self.atkcount//3], (self.x, self.y))
+                    win.blit(self.spr_walk_ar[self.atkcount//3], (self.x, self.y+7.5))
                 elif self.up:
-                    win.blit(self.spr_walk_au[self.atkcount//3], (self.x, self.y+self.height-self.spr_walk_au[self.atkcount//3 +1].get_height()))
+                    win.blit(self.spr_walk_au[self.atkcount//3], (self.x, self.y+self.height-self.spr_walk_au[self.atkcount//3].get_height()))
                 else:
                     win.blit(self.spr_walk_ad[self.atkcount//3], (self.x, self.y))
                 self.atkcount+=1
@@ -208,13 +208,13 @@ class goblin_str(object):
             else:
                 if self.left:
                     self.curframe=self.atk_l[self.atkcount//3]
-                    win.blit(self.atk_l[self.atkcount//3], (self.x+self.width-self.atk_l[self.atkcount//3 +1].get_width(), self.y))
+                    win.blit(self.atk_l[self.atkcount//3], (self.x+self.width-self.atk_l[self.atkcount//3].get_width(), self.y))
                 elif self.right:
                     self.curframe=self.atk_r[self.atkcount//3]
                     win.blit(self.atk_r[self.atkcount//3], (self.x, self.y))
                 elif self.up:
                     self.curframe=self.atk_u[self.atkcount//3]
-                    win.blit(self.atk_u[self.atkcount//3], (self.x, self.y+self.height-self.atk_u[self.atkcount//3 +1].get_height()))
+                    win.blit(self.atk_u[self.atkcount//3], (self.x, self.y+self.height-self.atk_u[self.atkcount//3].get_height()))
                 else:
                     self.curframe=self.atk_d[self.atkcount//3]
                     win.blit(self.atk_d[self.atkcount//3], (self.x, self.y))
@@ -309,12 +309,14 @@ def game_loop():
             p1.sprite_update(0, 1, 0, 0, 0)
         if keys[pygame.K_z]:
             p1.isatk=1
-        if not (keys[pygame.K_UP] or keys[pygame.K_DOWN] or keys[pygame.K_LEFT] or keys[pygame.K_RIGHT]):
-            # if no key is pressed no movement
+            p1.idle=0
+        if not (keys[pygame.K_UP] or keys[pygame.K_DOWN] or keys[pygame.K_LEFT] or keys[pygame.K_RIGHT] or p1.isatk):
+            #if no key is pressed no movement
             p1.idle = True
         e1.chase(p1)
         redrawgamewindow()
     pygame.quit()
+    quit()
 
 
 # created the knight and time
