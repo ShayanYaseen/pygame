@@ -77,11 +77,8 @@ class knight(object):
         self.up = False
         self.down = False
         self.health = 100
-
-        self.aleft = False
-        self.aright = True
-        self.aup = False
-        self.adown = False
+        self.isatk=False
+        self.atkcount=0
         # defined the sprites update for animation while walking right and left
         self.spr_walk_r = [pygame.image.load('./player/movement/right/{}.png'.format(x)) for x in range(1,10)]
         self.spr_walk_l = [pygame.transform.flip(x, 1, 0) for x in self.spr_walk_r]
@@ -103,7 +100,7 @@ class knight(object):
     def draw(self, win):
         # called by redraw game window will udate the character sprite
         # based on input key
-        if self.framecount+1 >= 9:
+        if self.framecount+1 >= 27:
             self.framecount = 0
         if self.idle:
             if self.left:
@@ -114,26 +111,36 @@ class knight(object):
                 win.blit(self.spr_idl_u[self.framecount//3], (self.x, self.y))
             else:
                 win.blit(self.spr_idl_d[self.framecount//3], (self.x, self.y))
-        else:
+            self.framecount += 1
+        elif not self.isatk:
             if self.left:
                 win.blit(self.spr_walk_l[self.framecount//3], (self.x, self.y))
             elif self.right:
                 win.blit(self.spr_walk_r[self.framecount//3], (self.x, self.y))
             elif self.up:
                 win.blit(self.spr_walk_u[self.framecount//3], (self.x, self.y))
-            #attack sprites
-            elif self.aright:
-                win.blit(self.spr_walk_ar[self.framecount//3], (self.x, self.y))
-            elif self.aleft:
-                win.blit(self.spr_walk_al[self.framecount//3], (self.x, self.y))
-            elif self.aup:
-                win.blit(self.spr_walk_au[self.framecount//3], (self.x, self.y))
-            elif self.adown:
-                win.blit(self.spr_walk_ad[self.framecount//3], (self.x, self.y))
-            
-            else:
+            elif self.down:
                 win.blit(self.spr_walk_d[self.framecount//3], (self.x, self.y))
-        self.framecount += 1
+            self.framecount += 1
+            #attack sprites
+        elif self.isatk:
+            if self.atkcount==15:
+                self.atkcount=3
+                self.isatk=0
+                self.draw(win)
+            else:
+                if self.left:
+                    win.blit(self.spr_walk_al[self.atkcount//3], (self.x+self.width-self.spr_walk_al[self.atkcount//3].get_width(), self.y+7.5))
+                elif self.right:
+                    win.blit(self.spr_walk_ar[self.atkcount//3], (self.x, self.y+7.5))
+                elif self.up:
+                    win.blit(self.spr_walk_au[self.atkcount//3], (self.x, self.y+self.height-self.spr_walk_au[self.atkcount//3].get_height()))
+                else:
+                    win.blit(self.spr_walk_ad[self.atkcount//3], (self.x, self.y))
+                self.atkcount+=1
+        else:
+           win.blit(self.spr_walk_d[self.framecount//3], (self.x, self.y))
+           self.framecount += 1
         # Draws the health bar on top right of the screen
         pygame.draw.rect(win, (0, 0, 0), (dispw-82, 6, 74, 12))
         if self.health > 0:
@@ -141,16 +148,12 @@ class knight(object):
 
     # mapped control call this function with update left,rigth,idle -> after this
     # redraw game window function calls knight.draw function
-    def sprite_update(self, l, r, i, u, d,al,ar,au,ad):
+    def sprite_update(self, l, r, i, u, d):
         self.left = l
         self.right = r
         self.idle = i
         self.up = u
         self.down = d
-        self.aleft = al
-        self.aright = ar
-        self.aup = au
-        self.adown = ad
 
     def sprite_state(self):
         return (self.left, self.right, self.up, self.down, self.idle)
@@ -162,7 +165,7 @@ class goblin_str(object):
         self.y=y
         self.width=30
         self.height=51
-        self.vel=2
+        self.vel=3
         self.framecount=0
         self.left=False
         self.right=False
@@ -293,31 +296,27 @@ def game_loop():
         if keys[pygame.K_UP] and p1.y > p1.vel:
             p1.y -= p1.vel
             p1.up = 1
-            p1.sprite_update(0, 0, 0, 1, 0, 0, 0, 0, 0)
+            p1.sprite_update(0, 0, 0, 1, 0)
         if keys[pygame.K_DOWN] and p1.y < disph-p1.height-p1.vel:
             p1.y += p1.vel
             p1.down = 1
-            p1.sprite_update(0, 0, 0, 0, 1,0, 0, 0, 0)
+            p1.sprite_update(0, 0, 0, 0, 1)
         if keys[pygame.K_LEFT] and p1.x > p1.vel:
             p1.x -= p1.vel
-            p1.sprite_update(1, 0, 0, 0, 0,0, 0, 0, 0)
+            p1.sprite_update(1, 0, 0, 0, 0)
         if keys[pygame.K_RIGHT] and p1.x < dispw-p1.width-p1.vel:
             p1.x += p1.vel
-            p1.sprite_update(0, 1, 0, 0, 0,0, 0, 0, 0)
-        if keys[pygame.K_z] and p1.right:
-            p1.sprite_update(0,0,0,0,0,0,1,0,0)
-        if keys[pygame.K_z] and p1.left:
-            p1.sprite_update(0, 0, 0, 0, 0, 1, 0, 0, 0)
-        if keys[pygame.K_z] and p1.up:
-            p1.sprite_update(0,0,0,0,0,0,0,1,0) 
-        if keys[pygame.K_z] and p1.down:
-            p1.sprite_update(0, 0, 0, 0, 0, 0, 0, 0, 1)
-        if not (keys[pygame.K_UP] or keys[pygame.K_DOWN] or keys[pygame.K_LEFT] or keys[pygame.K_RIGHT]):
-            # if no key is pressed no movement
+            p1.sprite_update(0, 1, 0, 0, 0)
+        if keys[pygame.K_z]:
+            p1.isatk=1
+            p1.idle=0
+        if not (keys[pygame.K_UP] or keys[pygame.K_DOWN] or keys[pygame.K_LEFT] or keys[pygame.K_RIGHT] or p1.isatk):
+            #if no key is pressed no movement
             p1.idle = True
         e1.chase(p1)
         redrawgamewindow()
     pygame.quit()
+    quit()
 
 
 # created the knight and time
