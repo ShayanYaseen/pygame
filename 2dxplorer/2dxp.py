@@ -29,6 +29,29 @@ def text_objects(text, font):
 
 # game intro menu that appears for the first time
 # game is loaded
+<<<<<<< Updated upstream
+=======
+def button(msg,x,y,w,h,i,a,action=None):
+    mouse = pygame.mouse.get_pos()
+    click = pygame.mouse.get_pressed()
+
+    if x+w > mouse[0] > x and y+h > mouse[1] > y:
+        pygame.draw.rect(win, i, (x, y, w, h))
+        if click[0]==1 and action!= None:
+            if action == "play":
+                game_loop(score)
+            elif action == "quit":
+                pygame.quit()
+                quit()
+    else:
+        pygame.draw.rect(win, a, (x, y, w, h))
+
+    smallText = pygame.font.Font("freesansbold.ttf", 20)
+    TextSurf, TextRect = text_objects(msg, smallText)
+    TextRect.center = ((x+(w/2)), (y+h/2))
+    win.blit(TextSurf, TextRect)
+
+>>>>>>> Stashed changes
 def game_intro():
     intro = True
     while intro:
@@ -57,7 +80,8 @@ def redrawgamewindow():
     # bg is the picture to be loaded in the level
     win.blit(bg, (0, 0))
     p1.draw(win)
-    e1.draw(win)
+    for i in enemies:
+        i.draw(win)
     pygame.display.update()
 
 
@@ -76,9 +100,10 @@ class knight(object):
         self.idle = True
         self.up = False
         self.down = False
-        self.health = 100
+        self.health = 1000
         self.isatk=False
         self.atkcount=0
+        self.curframe=None
         # defined the sprites update for animation while walking right and left
         self.spr_walk_r = [pygame.image.load('./player/movement/right/{}.png'.format(x)) for x in range(1,10)]
         self.spr_walk_l = [pygame.transform.flip(x, 1, 0) for x in self.spr_walk_r]
@@ -130,12 +155,16 @@ class knight(object):
                 self.draw(win)
             else:
                 if self.left:
+                    self.curframe=self.spr_walk_al[self.atkcount//3]
                     win.blit(self.spr_walk_al[self.atkcount//3], (self.x+self.width-self.spr_walk_al[self.atkcount//3].get_width(), self.y+7.5))
                 elif self.right:
+                    self.curframe=self.spr_walk_ar[self.atkcount//3]
                     win.blit(self.spr_walk_ar[self.atkcount//3], (self.x, self.y+7.5))
                 elif self.up:
+                    self.curframe=self.spr_walk_au[self.atkcount//3]
                     win.blit(self.spr_walk_au[self.atkcount//3], (self.x, self.y+self.height-self.spr_walk_au[self.atkcount//3].get_height()))
                 else:
+                    self.curframe=self.spr_walk_ad[self.atkcount//3]
                     win.blit(self.spr_walk_ad[self.atkcount//3], (self.x, self.y))
                 self.atkcount+=1
         else:
@@ -144,7 +173,11 @@ class knight(object):
         # Draws the health bar on top right of the screen
         pygame.draw.rect(win, (0, 0, 0), (dispw-82, 6, 74, 12))
         if self.health > 0:
+<<<<<<< Updated upstream
            pygame.draw.rect(win, (255, 0, 0),(dispw-80, 7, 70*self.health/100, 10))
+=======
+           pygame.draw.rect(win, (255, 0, 0),(dispw-160, 7, 150*self.health/1000, 12))
+>>>>>>> Stashed changes
 
     # mapped control call this function with update left,rigth,idle -> after this
     # redraw game window function calls knight.draw function
@@ -158,6 +191,22 @@ class knight(object):
     def sprite_state(self):
         return (self.left, self.right, self.up, self.down, self.idle)
 
+    
+    def attack(self,e1):
+        if self.left:
+            if self.x-5< e1.x+e1.width<self.x + self.curframe.get_width():
+                e1.health-=5
+        if self.right:
+            if self.x-5< e1.x+e1.width/2 <self.x + self.curframe.get_width():
+                e1.health-=5
+        if self.up:
+            if self.y-self.curframe.get_height()< e1.y+e1.height < self.y+self.width:
+                e1.health-=5
+        if self.down:
+            if self.y< e1.y< self.y + self.curframe.get_height():
+                e1.health-=5
+
+
 
 class goblin_str(object):
     def __init__(self,x,y):
@@ -168,11 +217,11 @@ class goblin_str(object):
         self.vel=3
         self.framecount=0
         self.left=False
-        self.right=False
+        self.right=True
         self.up=False
         self.down=False
         self.idle=True
-        self.health=100
+        self.health=50
         self.atkcount=0
         self.isatk=False
         self.curframe=None
@@ -261,21 +310,21 @@ class goblin_str(object):
             else:
                 self.x+=self.vel*math.fabs(math.cos(angle))
                 self.sprite_update(0,1,0,0,0)
-        if e1.atkcount==4:
+        if self.atkcount==4:
             if e1.left or e1.up:
                 if e1.x-e1.curframe.get_width()-e1.width<p1.x<e1.x:
-                  p1.health-=5
+                  p1.health-=20
                 elif e1.y-e1.curframe.get_height()-e1.height<p1.y<e1.y:
-                  p1.health-=5
+                  p1.health-=20
             if e1.right or e1.down:
                if e1.x+e1.curframe.get_width()+e1.width>p1.x>e1.x:
-                  p1.health-=5
+                  p1.health-=20
                elif e1.y+e1.curframe.get_height()+e1.height>p1.y>e1.y:
-                  p1.health-=5
+                  p1.health-=20
 
 
 
-def game_loop():
+def game_loop(score):
     run = True
     while run:
         clock.tick(30)  # Games fps
@@ -295,11 +344,19 @@ def game_loop():
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP] and p1.y > p1.vel:
             p1.y -= p1.vel
+<<<<<<< Updated upstream
             p1.up = 1
             p1.sprite_update(0, 0, 0, 1, 0)
         if keys[pygame.K_DOWN] and p1.y < disph-p1.height-p1.vel:
             p1.y += p1.vel
             p1.down = 1
+=======
+            camera_y += p1.vel
+            p1.sprite_update(0, 0, 0, 1, 0)       
+        if keys[pygame.K_DOWN]: #and p1.y < disph-p1.height-p1.vel:
+            p1.y += p1.vel
+            camera_y -= p1.vel
+>>>>>>> Stashed changes
             p1.sprite_update(0, 0, 0, 0, 1)
         if keys[pygame.K_LEFT] and p1.x > p1.vel:
             p1.x -= p1.vel
@@ -312,9 +369,27 @@ def game_loop():
             p1.idle=0
         if not (keys[pygame.K_UP] or keys[pygame.K_DOWN] or keys[pygame.K_LEFT] or keys[pygame.K_RIGHT] or p1.isatk):
             #if no key is pressed no movement
+<<<<<<< Updated upstream
             p1.idle = True
         e1.chase(p1)
         redrawgamewindow()
+=======
+            p1.idle = True   
+        for i in enemies:
+            i.chase(p1)
+            if i.health<=0:
+              enemies.remove(i)
+              score+=1
+        if(len(enemies)==0):
+            enemies.append(goblin_str(800,800))
+            enemies.append(goblin_str(0,800))
+        redrawgamewindow()
+        if p1.atkcount//3==4:
+           for i in enemies:
+               p1.attack(i)
+        print(score)
+        #print(camera_x , camera_y , p1.x, p1.y)
+>>>>>>> Stashed changes
     pygame.quit()
     quit()
 
@@ -325,7 +400,18 @@ save_pos = f.read()
 save_list = save_pos.split()
 p1 = knight(int(save_list[0]), int(save_list[1]), 64, 64)
 e1=goblin_str(800,800)
+enemies=[]
+enemies.append(e1)
 clock = pygame.time.Clock()
+<<<<<<< Updated upstream
+=======
+score=0
+
+bgOne_x = -int(save_list[0])
+bgOne_y = -int(save_list[1])
+pygame.display.update()
+
+>>>>>>> Stashed changes
 '''
     main program starts here
 '''
