@@ -56,6 +56,18 @@ def button(msg,x,y,w,h,i,a,action=None):
     TextSurf, TextRect = text_objects(msg, smallText)
     TextRect.center = ((x+(w/2)), (y+h/2))
     win.blit(TextSurf, TextRect)
+def game_paused():
+    intro = True
+    while intro:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        largeText = pygame.font.Font('freesansbold.ttf', 90)
+        TextSurf, TextRect = text_objects("Game Paused", largeText)
+        pygame.draw.rect(win, black, (0, (disph/3.2), 900, 200))
+        TextRect.center = ((dispw/2), (disph/2))
+        win.blit(TextSurf, TextRect)
 
 def game_intro():
     intro = True
@@ -390,15 +402,15 @@ def game_loop(score):
             camera_y -= (camera_y/2)-p1.y
         # Mapping the controls
         keys = pygame.key.get_pressed()
+        
+        
         if keys[pygame.K_UP]: #and p1.y > p1.vel:          
             p1.y -= p1.vel
             camera_y -= p1.vel
-            #p1.up = 1
             p1.sprite_update(0, 0, 0, 1, 0)       
         if keys[pygame.K_DOWN]: #and p1.y < disph-p1.height-p1.vel:
             p1.y += p1.vel
             camera_y += p1.vel
-            #p1.down = 1
             p1.sprite_update(0, 0, 0, 0, 1)
         if keys[pygame.K_LEFT]: #and p1.x > p1.vel:
             p1.x -= p1.vel
@@ -408,21 +420,16 @@ def game_loop(score):
             p1.x += p1.vel
             camera_x += p1.vel
             p1.sprite_update(0, 1, 0, 0, 0)
-        #not moving camera along
-        if keys[pygame.K_UP] and keys[pygame.K_a]:  # and p1.y > p1.vel:
-            p1.y -= p1.vel
-            p1.sprite_update(0, 0, 0, 1, 0)
+       
+       #not moving camera along
+        if keys[pygame.K_UP] and keys[pygame.K_a]:
+            camera_y -= p1.vel
         if keys[pygame.K_DOWN] and keys[pygame.K_a]:
-            p1.y += p1.vel
-            p1.sprite_update(0, 0, 0, 0, 1)
-        if keys[pygame.K_LEFT] and keys[pygame.K_a]:  # and p1.x > p1.vel:
-            p1.x -= p1.vel
+            camera_y += p1.vel
+        if keys[pygame.K_LEFT] and keys[pygame.K_a]:
             camera_x -= p1.vel
-            p1.sprite_update(1, 0, 0, 0, 0)
         if keys[pygame.K_RIGHT] and keys[pygame.K_a]:
-            p1.x += p1.vel
             camera_x += p1.vel
-            p1.sprite_update(0, 1, 0, 0, 0)
         if keys[pygame.K_z]:
             p1.isatk=1
             p1.idle=0
@@ -448,8 +455,6 @@ def game_loop(score):
 
 
 # created the knight and time
-
-
 f = open("save.txt", "r")
 save_pos = f.read()
 save_list = save_pos.split()
@@ -469,3 +474,4 @@ pygame.display.update()
 '''
 game_intro()
 #game_loop()
+#game_paused()
