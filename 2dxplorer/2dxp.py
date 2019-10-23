@@ -16,8 +16,8 @@ pygame.display.set_caption("Legend of Zelda")  # Windows title
 bgOne = pygame.image.load('./png/GrassTileset.png')
 bgOne_x = 0
 bgOne_y = 0
-camera_x = 0
-camera_y = 0
+camera_x = dispw
+camera_y = disph
 
 # define colours
 black = (0, 0, 0)
@@ -339,40 +339,45 @@ def game_loop():
             if event.type == pygame.QUIT:
                 #save all the arguments requierd
                 #in a text file
+                '''
                 f = open("save.txt","w+")
                 f.close()
                 f = open("save.txt","w")
                 f.write(str(p1.x))
                 f.write(" ")
                 f.write(str(p1.y))
+                '''
                 run = False
         global bgOne_x , camera_x , bgOne_y,camera_y
+        
+        #CAMERA SCROLLING
+        if (camera_x-p1.x) > camera_x/2:
+            bgOne_x += (camera_x/2)-p1.x
+            camera_x -= (camera_x/2)-p1.x
+        
+        if (camera_x-p1.x) < camera_x/2:
+            bgOne_x += (camera_x/2)-p1.x
+            camera_x -= (camera_x/2)-p1.x
+
+        if (camera_y-p1.y) > camera_y/2:
+            bgOne_y += (camera_y/2)-p1.y
+            camera_y -= (camera_y/2)-p1.y
+
+        if (camera_y-p1.y) < camera_y/2:
+            bgOne_y += (camera_y/2)-p1.y
+            camera_y -= (camera_y/2)-p1.y
+
         # Mapping the controls
-        
-        if(camera_x > dispw/128):
-                bgOne_x -= dispw/128
-                camera_x = 0
-        if(camera_x < -dispw/128):
-                bgOne_x += dispw/128
-                camera_x = 0
-        
-        if(camera_y > disph/128):
-                bgOne_y += disph/128
-                camera_y = 0
-        if(camera_y < -disph/128):
-                bgOne_y -= disph/128
-                camera_y = 0
-        
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP]: #and p1.y > p1.vel:          
             p1.y -= p1.vel
-            camera_y += p1.vel
-            p1.up = 1
+            camera_y -= p1.vel
+            #p1.up = 1
             p1.sprite_update(0, 0, 0, 1, 0)       
         if keys[pygame.K_DOWN]: #and p1.y < disph-p1.height-p1.vel:
             p1.y += p1.vel
-            camera_y -= p1.vel
-            p1.down = 1
+            camera_y += p1.vel
+            #p1.down = 1
             p1.sprite_update(0, 0, 0, 0, 1)
         if keys[pygame.K_LEFT]: #and p1.x > p1.vel:
             p1.x -= p1.vel
@@ -382,16 +387,29 @@ def game_loop():
             p1.x += p1.vel
             camera_x += p1.vel
             p1.sprite_update(0, 1, 0, 0, 0)
-            
+        #not moving camera along
+        if keys[pygame.K_UP] and keys[pygame.K_a]:  # and p1.y > p1.vel:
+            p1.y -= p1.vel
+            p1.sprite_update(0, 0, 0, 1, 0)
+        if keys[pygame.K_DOWN] and keys[pygame.K_a]:
+            p1.y += p1.vel
+            p1.sprite_update(0, 0, 0, 0, 1)
+        if keys[pygame.K_LEFT] and keys[pygame.K_a]:  # and p1.x > p1.vel:
+            p1.x -= p1.vel
+            p1.sprite_update(1, 0, 0, 0, 0)
+        if keys[pygame.K_RIGHT] and keys[pygame.K_a]:
+            p1.x += p1.vel
+            p1.sprite_update(0, 1, 0, 0, 0)
+
         if keys[pygame.K_z]:
             p1.isatk=1
             p1.idle=0
         if not (keys[pygame.K_UP] or keys[pygame.K_DOWN] or keys[pygame.K_LEFT] or keys[pygame.K_RIGHT] or p1.isatk):
             #if no key is pressed no movement
             p1.idle = True    
-        e1.chase(p1)    
+        #e1.chase(p1)    
         redrawgamewindow()
-        print(camera_x , camera_y , p1.x, p1.y)
+        print(bgOne_x , bgOne_y , p1.x, p1.y)
     pygame.quit()
     quit()
 
@@ -415,4 +433,4 @@ pygame.display.update()
     main program starts here
 '''
 game_intro()
-#game_loop()
+game_loop()
