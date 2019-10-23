@@ -12,14 +12,21 @@ pygame.init()
 dispw = 832  # Window width
 disph = 704  # Window height
 win = pygame.display.set_mode((dispw, disph))
-pygame.display.set_caption("Legend of Gagan")  # Windows title
-bg = pygame.image.load('./png/GrassTileset.png')
-
+pygame.display.set_caption("Legend of Zelda")  # Windows title
+bgOne = pygame.image.load('./png/GrassTileset.png')
+bgOne_x = 0
+bgOne_y = 0
+camera_x = 0
+camera_y = 0
 
 # define colours
 black = (0, 0, 0)
 white = (255, 255, 255)
-red = (255, 0, 0)
+yellow = (255, 255, 0)
+red = (200, 0, 0)
+green = (0,200,0)
+bright_red = (255,0,100)
+bright_green=(20,255,100)
 
 # function to create text with font and color
 # get_rect Returns a new rectangle covering the entire surface
@@ -29,8 +36,6 @@ def text_objects(text, font):
 
 # game intro menu that appears for the first time
 # game is loaded
-<<<<<<< Updated upstream
-=======
 def button(msg,x,y,w,h,i,a,action=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
@@ -51,7 +56,6 @@ def button(msg,x,y,w,h,i,a,action=None):
     TextRect.center = ((x+(w/2)), (y+h/2))
     win.blit(TextSurf, TextRect)
 
->>>>>>> Stashed changes
 def game_intro():
     intro = True
     while intro:
@@ -59,11 +63,15 @@ def game_intro():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+
         # fill game windows with black and write text
-        win.fill(black)
-        largeText = pygame.font.Font('freesansbold.ttf', 60)
+        game_intro_image = pygame.image.load('./png/game_intro_img.png')
+        win.blit(game_intro_image,(0,0))
+        largeText = pygame.font.Font('freesansbold.ttf', 90)
         smallText = pygame.font.Font('freesansbold.ttf', 15)
-        TextSurf, TextRect = text_objects("Legend of Gagan", largeText)
+        TextSurf, TextRect = text_objects("Legend of Zelda", largeText)
+        pygame.draw.rect(win, black, (0, (disph/3.2), 900,200))
+
         TextRect.center = ((dispw/2), (disph/2))
         win.blit(TextSurf, TextRect)
 
@@ -71,14 +79,36 @@ def game_intro():
             "Made with pygame library by Shayan 18103033 Rajat 18103025 Saiyam 18103030 ", smallText)
         TextRect.center = ((dispw/2), (disph/1.1))
         win.blit(TextSurf, TextRect)
+     
+        button("Play",150,500,100,90,green,bright_green,"play")
+        button("Quit", dispw-250, 500, 100, 90, red, bright_red,"quit")
+        
         pygame.display.update()
-        time.sleep(1)
-        intro = False
+        #time.sleep(0.5)
+        #intro = False
+
+
+def game_exit():
+    intro = True
+    while intro:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        win.fill(black)
+        pygame.display.update()
+        largeText = pygame.font.Font('freesansbold.ttf', 60)
+        TextSurf, TextRect = text_objects("Game Over", largeText)
+        TextRect.center = ((dispw/2), (disph/2))
+        win.blit(TextSurf, TextRect)
+        pygame.display.update()
+        time.sleep(0.5)
 
 
 def redrawgamewindow():
     # bg is the picture to be loaded in the level
-    win.blit(bg, (0, 0))
+    win.fill(black)
+    win.blit(bgOne, (bgOne_x, bgOne_y))
     p1.draw(win)
     for i in enemies:
         i.draw(win)
@@ -173,11 +203,7 @@ class knight(object):
         # Draws the health bar on top right of the screen
         pygame.draw.rect(win, (0, 0, 0), (dispw-82, 6, 74, 12))
         if self.health > 0:
-<<<<<<< Updated upstream
-           pygame.draw.rect(win, (255, 0, 0),(dispw-80, 7, 70*self.health/100, 10))
-=======
            pygame.draw.rect(win, (255, 0, 0),(dispw-160, 7, 150*self.health/1000, 12))
->>>>>>> Stashed changes
 
     # mapped control call this function with update left,rigth,idle -> after this
     # redraw game window function calls knight.draw function
@@ -205,7 +231,6 @@ class knight(object):
         if self.down:
             if self.y< e1.y< self.y + self.curframe.get_height():
                 e1.health-=5
-
 
 
 class goblin_str(object):
@@ -311,15 +336,15 @@ class goblin_str(object):
                 self.x+=self.vel*math.fabs(math.cos(angle))
                 self.sprite_update(0,1,0,0,0)
         if self.atkcount==4:
-            if e1.left or e1.up:
-                if e1.x-e1.curframe.get_width()-e1.width<p1.x<e1.x:
+            if self.left or self.up:
+                if self.x-self.curframe.get_width()-self.width<p1.x<self.x:
                   p1.health-=20
-                elif e1.y-e1.curframe.get_height()-e1.height<p1.y<e1.y:
+                elif self.y-self.curframe.get_height()-self.height<p1.y<self.y:
                   p1.health-=20
-            if e1.right or e1.down:
-               if e1.x+e1.curframe.get_width()+e1.width>p1.x>e1.x:
+            if self.right or self.down:
+               if self.x+self.curframe.get_width()+self.width>p1.x>self.x:
                   p1.health-=20
-               elif e1.y+e1.curframe.get_height()+e1.height>p1.y>e1.y:
+               elif self.y+self.curframe.get_height()+self.height>p1.y>self.y:
                   p1.health-=20
 
 
@@ -327,7 +352,10 @@ class goblin_str(object):
 def game_loop(score):
     run = True
     while run:
-        clock.tick(30)  # Games fps
+        clock.tick(60)  # Games fps
+        if(p1.health <= 0):
+            game_exit()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 #save all the arguments requierd
@@ -339,42 +367,47 @@ def game_loop(score):
                 f.write(" ")
                 f.write(str(p1.y))
                 run = False
-
+        global bgOne_x , camera_x , bgOne_y,camera_y
         # Mapping the controls
+        
+        if(camera_x > dispw/128):
+                bgOne_x -= dispw/128
+                camera_x = 0
+        if(camera_x < -dispw/128):
+                bgOne_x += dispw/128
+                camera_x = 0
+        
+        if(camera_y > disph/128):
+                bgOne_y += disph/128
+                camera_y = 0
+        if(camera_y < -disph/128):
+                bgOne_y -= disph/128
+                camera_y = 0
+        
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP] and p1.y > p1.vel:
+        if keys[pygame.K_UP]: #and p1.y > p1.vel:          
             p1.y -= p1.vel
-<<<<<<< Updated upstream
-            p1.up = 1
-            p1.sprite_update(0, 0, 0, 1, 0)
-        if keys[pygame.K_DOWN] and p1.y < disph-p1.height-p1.vel:
-            p1.y += p1.vel
-            p1.down = 1
-=======
             camera_y += p1.vel
             p1.sprite_update(0, 0, 0, 1, 0)       
         if keys[pygame.K_DOWN]: #and p1.y < disph-p1.height-p1.vel:
             p1.y += p1.vel
             camera_y -= p1.vel
->>>>>>> Stashed changes
             p1.sprite_update(0, 0, 0, 0, 1)
-        if keys[pygame.K_LEFT] and p1.x > p1.vel:
+        if keys[pygame.K_LEFT]: #and p1.x > p1.vel:
             p1.x -= p1.vel
+            camera_x -= p1.vel
             p1.sprite_update(1, 0, 0, 0, 0)
-        if keys[pygame.K_RIGHT] and p1.x < dispw-p1.width-p1.vel:
+        if keys[pygame.K_RIGHT]: #and p1.x < dispw-p1.width-p1.vel:
             p1.x += p1.vel
+            camera_x += p1.vel
             p1.sprite_update(0, 1, 0, 0, 0)
+            
         if keys[pygame.K_z]:
             p1.isatk=1
             p1.idle=0
         if not (keys[pygame.K_UP] or keys[pygame.K_DOWN] or keys[pygame.K_LEFT] or keys[pygame.K_RIGHT] or p1.isatk):
             #if no key is pressed no movement
-<<<<<<< Updated upstream
-            p1.idle = True
-        e1.chase(p1)
-        redrawgamewindow()
-=======
-            p1.idle = True   
+            p1.idle = True    
         for i in enemies:
             i.chase(p1)
             if i.health<=0:
@@ -389,12 +422,13 @@ def game_loop(score):
                p1.attack(i)
         print(score)
         #print(camera_x , camera_y , p1.x, p1.y)
->>>>>>> Stashed changes
     pygame.quit()
     quit()
 
 
 # created the knight and time
+
+
 f = open("save.txt", "r")
 save_pos = f.read()
 save_list = save_pos.split()
@@ -403,17 +437,14 @@ e1=goblin_str(800,800)
 enemies=[]
 enemies.append(e1)
 clock = pygame.time.Clock()
-<<<<<<< Updated upstream
-=======
 score=0
 
 bgOne_x = -int(save_list[0])
 bgOne_y = -int(save_list[1])
 pygame.display.update()
 
->>>>>>> Stashed changes
 '''
     main program starts here
 '''
 game_intro()
-game_loop()
+#game_loop()
