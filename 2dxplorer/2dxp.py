@@ -118,13 +118,18 @@ def game_exit():
         time.sleep(0.5)
 
 
-def redrawgamewindow():
+def redrawgamewindow(score):
     # bg is the picture to be loaded in the level
     win.fill(black)
     win.blit(bgOne, (bgOne_x, bgOne_y))
     p1.draw(win)
     for i in enemies:
         i.draw(win)
+    smallText = pygame.font.Font('freesansbold.ttf', 15)
+    TextSurf, TextRect = text_objects("Score: {}".format(score), smallText)
+    TextRect.center = (30,30)
+    win.blit(TextSurf, TextRect)
+
     pygame.display.update()
 
 
@@ -253,7 +258,7 @@ class goblin_str(object):
         self.y=y
         self.width=30
         self.height=51
-        self.vel=1
+        self.vel=2
         self.framecount=0
         self.left=False
         self.right=True
@@ -444,11 +449,10 @@ def game_loop(score):
         if(len(enemies)==0):
             enemies.append(goblin_str(800,800))
             enemies.append(goblin_str(0,800))
-        redrawgamewindow()
+        redrawgamewindow(score)
         if p1.atkcount//3==4:
            for i in enemies:
                p1.attack(i)
-        print(score)
         #print(camera_x , camera_y , p1.x, p1.y)
     pygame.quit()
     quit()
