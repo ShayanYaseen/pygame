@@ -5,6 +5,7 @@
 import pygame
 import time
 import math
+import random
 
 # initialized the pygame module
 pygame.init()
@@ -127,7 +128,7 @@ def redrawgamewindow(score):
         i.draw(win)
     smallText = pygame.font.Font('freesansbold.ttf', 15)
     TextSurf, TextRect = text_objects("Score: {}".format(score), smallText)
-    TextRect.center = (30,30)
+    TextRect.center = (30,10)
     win.blit(TextSurf, TextRect)
 
     pygame.display.update()
@@ -447,8 +448,8 @@ def game_loop(score):
               enemies.remove(i)
               score+=1
         if(len(enemies)==0):
-            enemies.append(goblin_str(800,800))
-            enemies.append(goblin_str(0,800))
+            enemies.append(goblin_str(800,random.randrange(710)))
+            enemies.append(goblin_str(0,random.randrange(710)))
         redrawgamewindow(score)
         if p1.atkcount//3==4:
            for i in enemies:
