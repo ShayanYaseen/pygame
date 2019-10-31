@@ -10,8 +10,8 @@ import random
 # initialized the pygame module
 pygame.init()
 # Games windows settings
-dispw = 832  # Window width
-disph = 704  # Window height
+dispw = 800  # Window width
+disph = 800  # Window height
 win = pygame.display.set_mode((dispw, disph))
 pygame.display.set_caption("Legend of Zelda")  # Windows title
 bgOne = pygame.image.load('./png/GrassTileset.png')
@@ -119,13 +119,28 @@ def game_exit():
         time.sleep(0.5)
 
 
+class castlebg(object):
+    def __init__(self):
+        self.layers=[pygame.image.load('./castle entrance/layer{}.png'.format(x)) for x in range(1, 3)]
+        self.alayers=[pygame.image.load('./castle entrance/alayer{}.png'.format(x)) for x in range(1, 6)]
+        self.framecount=0
+    
+    def draw(self,win):
+        if self.framecount+1>=15:
+            self.framecount=0
+        win.blit(self.alayers[self.framecount//5],(0,0))
+        self.framecount+=1
+
 def redrawgamewindow(score):
     # bg is the picture to be loaded in the level
-    win.fill(black)
-    win.blit(bgOne, (bgOne_x, bgOne_y))
+    #win.fill(black)
+    #win.blit(bgOne, (bgOne_x, bgOne_y))
+    win.blit(bg1.layers[0],(0,0))
+    win.blit(bg1.layers[1],(0,0))
     p1.draw(win)
     for i in enemies:
         i.draw(win)
+    bg1.draw(win)
     smallText = pygame.font.Font('freesansbold.ttf', 15)
     TextSurf, TextRect = text_objects("Score: {}".format(score), smallText)
     TextRect.center = (30,10)
@@ -389,53 +404,53 @@ def game_loop(score):
                 f.write(str(p1.y))
                 '''
                 run = False
-        global bgOne_x , camera_x , bgOne_y,camera_y
-        #CAMERA SCROLLING
-        if (camera_x-p1.x) > camera_x/2:
-            bgOne_x += (camera_x/2)-p1.x
-            camera_x -= (camera_x/2)-p1.x
+        # global bgOne_x , camera_x , bgOne_y,camera_y
+        # #CAMERA SCROLLING
+        # if (camera_x-p1.x) > camera_x/2:
+        #     bgOne_x += (camera_x/2)-p1.x
+        #     camera_x -= (camera_x/2)-p1.x
         
-        if (camera_x-p1.x) < camera_x/2:
-            bgOne_x += (camera_x/2)-p1.x
-            camera_x -= (camera_x/2)-p1.x
+        # if (camera_x-p1.x) < camera_x/2:
+        #     bgOne_x += (camera_x/2)-p1.x
+        #     camera_x -= (camera_x/2)-p1.x
 
-        if (camera_y-p1.y) > camera_y/2:
-            bgOne_y += (camera_y/2)-p1.y
-            camera_y -= (camera_y/2)-p1.y
+        # if (camera_y-p1.y) > camera_y/2:
+        #     bgOne_y += (camera_y/2)-p1.y
+        #     camera_y -= (camera_y/2)-p1.y
 
-        if (camera_y-p1.y) < camera_y/2:
-            bgOne_y += (camera_y/2)-p1.y
-            camera_y -= (camera_y/2)-p1.y
+        # if (camera_y-p1.y) < camera_y/2:
+        #     bgOne_y += (camera_y/2)-p1.y
+        #     camera_y -= (camera_y/2)-p1.y
         # Mapping the controls
         keys = pygame.key.get_pressed()
         
         
         if keys[pygame.K_UP]: #and p1.y > p1.vel:          
             p1.y -= p1.vel
-            camera_y -= p1.vel
+            #camera_y -= p1.vel
             p1.sprite_update(0, 0, 0, 1, 0)       
         if keys[pygame.K_DOWN]: #and p1.y < disph-p1.height-p1.vel:
             p1.y += p1.vel
-            camera_y += p1.vel
+            #camera_y += p1.vel
             p1.sprite_update(0, 0, 0, 0, 1)
         if keys[pygame.K_LEFT]: #and p1.x > p1.vel:
             p1.x -= p1.vel
-            camera_x -= p1.vel
+            #camera_x -= p1.vel
             p1.sprite_update(1, 0, 0, 0, 0)
         if keys[pygame.K_RIGHT]: #and p1.x < dispw-p1.width-p1.vel:
             p1.x += p1.vel
-            camera_x += p1.vel
+            #camera_x += p1.vel
             p1.sprite_update(0, 1, 0, 0, 0)
        
        #not moving camera along
-        if keys[pygame.K_UP] and keys[pygame.K_a]:
-            camera_y -= p1.vel
-        if keys[pygame.K_DOWN] and keys[pygame.K_a]:
-            camera_y += p1.vel
-        if keys[pygame.K_LEFT] and keys[pygame.K_a]:
-            camera_x -= p1.vel
-        if keys[pygame.K_RIGHT] and keys[pygame.K_a]:
-            camera_x += p1.vel
+        # if keys[pygame.K_UP] and keys[pygame.K_a]:
+        #     camera_y -= p1.vel
+        # if keys[pygame.K_DOWN] and keys[pygame.K_a]:
+        #     camera_y += p1.vel
+        # if keys[pygame.K_LEFT] and keys[pygame.K_a]:
+        #     camera_x -= p1.vel
+        # if keys[pygame.K_RIGHT] and keys[pygame.K_a]:
+        #     camera_x += p1.vel
         if keys[pygame.K_z]:
             p1.isatk=1
             p1.idle=0
@@ -464,6 +479,7 @@ f = open("save.txt", "r")
 save_pos = f.read()
 save_list = save_pos.split()
 p1 = knight(int(save_list[0]), int(save_list[1]), 64, 64)
+bg1=castlebg()
 e1=goblin_str(800,800)
 enemies=[]
 enemies.append(e1)
