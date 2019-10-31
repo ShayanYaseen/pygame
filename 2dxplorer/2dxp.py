@@ -1,6 +1,6 @@
 # title           :pyscript.py
 # description     :Python project for CSN202
-# author          :Shayan(18103033),Rajat(18103025),Saiyam(18103030)
+# author          :Shayan(18103033),Rajat(18103025)
 # usage           :python3 2dxp.py
 import pygame
 import time
@@ -37,6 +37,8 @@ def text_objects(text, font):
 
 # game intro menu that appears for the first time
 # game is loaded
+
+
 def button(msg,x,y,w,h,i,a,action=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
@@ -47,13 +49,12 @@ def button(msg,x,y,w,h,i,a,action=None):
             if action == "play":
                 game_loop(score)
                 game_loop()
-            elif action == "quit":
-                pygame.quit()
-                quit()
+            elif action == "leaderboard":
+                leaderboard_menu()
     else:
         pygame.draw.rect(win, a, (x, y, w, h))
 
-    smallText = pygame.font.Font("freesansbold.ttf", 20)
+    smallText = pygame.font.Font("freesansbold.ttf", 15)
     TextSurf, TextRect = text_objects(msg, smallText)
     TextRect.center = ((x+(w/2)), (y+h/2))
     win.blit(TextSurf, TextRect)
@@ -81,26 +82,61 @@ def game_intro():
         # fill game windows with black and write text
         game_intro_image = pygame.image.load('./png/game_intro_img.png')
         win.blit(game_intro_image,(0,0))
+        
         largeText = pygame.font.Font('freesansbold.ttf', 90)
         smallText = pygame.font.Font('freesansbold.ttf', 15)
+        
         TextSurf, TextRect = text_objects("Legend of Zelda", largeText)
         pygame.draw.rect(win, black, (0, (disph/3.2), 900,200))
-
         TextRect.center = ((dispw/2), (disph/2))
         win.blit(TextSurf, TextRect)
 
         TextSurf, TextRect = text_objects(
-            "Made with pygame library by Shayan 18103033 Rajat 18103025 Saiyam 18103030 ", smallText)
+            "Made with pygame library by Shayan 18103033 Rajat 18103025", smallText)
         TextRect.center = ((dispw/2), (disph/1.1))
         win.blit(TextSurf, TextRect)
      
         button("Play",150,500,100,90,green,bright_green,"play")
-        button("Quit", dispw-250, 500, 100, 90, red, bright_red,"quit")
+        button("Leaderboard", dispw-250, 500, 100, 90, red, bright_red,"leaderboard")
         
         pygame.display.update()
         #time.sleep(0.5)
         #intro = False
 
+
+def leaderboard_menu():
+    intro = True
+    win.fill(green)
+    largeText = pygame.font.Font('freesansbold.ttf', 40)
+    smallText = pygame.font.Font('freesansbold.ttf', 30)
+    while(intro):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        pygame.display.update()      
+        TextSurf, TextRect = text_objects("High Scores", largeText)
+        TextRect.center = ((dispw/2), (disph/8))
+        win.blit(TextSurf, TextRect)
+        pygame.display.update()
+        pygame.draw.rect(win, black, (0, (disph/6), 1100, 800))
+        f = open("save.txt","r")
+        lb = list()
+        with open("save.txt","r") as f:
+            lb = f.read().splitlines()  
+        for x in range(0,len(lb)):
+            lb[x] = int(lb[x])          
+        lb.sort(reverse = True)
+        f = 0
+        #print(lb)
+        for n in range(0,10):
+            TextSurf, TextRect = text_objects(str(lb[n]), smallText)
+            TextRect.center = ((dispw/2),(170+f*50))
+            f += 1
+            win.blit(TextSurf, TextRect)
+        pygame.display.update()
+
+    game_intro()
 
 def game_exit():
     intro = True
@@ -109,6 +145,10 @@ def game_exit():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+        f = open("save.txt", "a")
+        f.write(str(score))
+        f.write(" ")
+        run = False
         win.fill(black)
         pygame.display.update()
         largeText = pygame.font.Font('freesansbold.ttf', 60)
@@ -389,20 +429,18 @@ def game_loop(score):
     while run:
         clock.tick(60)  # Games fps
         if(p1.health <= 0):
+            f = open("save.txt", "a")
+            f.write(str(score))
+            f.write("\n")
             game_exit()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 #save all the arguments requierd
                 #in a text file
-                '''
-                f = open("save.txt","w+")
-                f.close()
-                f = open("save.txt","w")
-                f.write(str(p1.x))
-                f.write(" ")
-                f.write(str(p1.y))
-                '''
+                f = open("save.txt","a")
+                f.write(str(score))
+                f.write("\n")
                 run = False
         # global bgOne_x , camera_x , bgOne_y,camera_y
         # #CAMERA SCROLLING
@@ -425,19 +463,19 @@ def game_loop(score):
         keys = pygame.key.get_pressed()
         
         
-        if keys[pygame.K_UP]: #and p1.y > p1.vel:          
+        if keys[pygame.K_UP] and p1.y > p1.vel + 32:          
             p1.y -= p1.vel
             #camera_y -= p1.vel
             p1.sprite_update(0, 0, 0, 1, 0)       
-        if keys[pygame.K_DOWN]: #and p1.y < disph-p1.height-p1.vel:
+        if keys[pygame.K_DOWN] and p1.y < 734-p1.height-p1.vel:
             p1.y += p1.vel
             #camera_y += p1.vel
             p1.sprite_update(0, 0, 0, 0, 1)
-        if keys[pygame.K_LEFT]: #and p1.x > p1.vel:
+        if keys[pygame.K_LEFT] and p1.x > p1.vel + 60:
             p1.x -= p1.vel
             #camera_x -= p1.vel
             p1.sprite_update(1, 0, 0, 0, 0)
-        if keys[pygame.K_RIGHT]: #and p1.x < dispw-p1.width-p1.vel:
+        if keys[pygame.K_RIGHT] and p1.x < 900-p1.width-p1.vel:
             p1.x += p1.vel
             #camera_x += p1.vel
             p1.sprite_update(0, 1, 0, 0, 0)
@@ -475,19 +513,16 @@ def game_loop(score):
 
 
 # created the knight and time
-f = open("save.txt", "r")
-save_pos = f.read()
-save_list = save_pos.split()
-p1 = knight(int(save_list[0]), int(save_list[1]), 64, 64)
-bg1=castlebg()
+p1 = knight(250, 300, 64, 64)
 e1=goblin_str(800,800)
+bg1=castlebg()
 enemies=[]
 enemies.append(e1)
 clock = pygame.time.Clock()
 score=0
 
-bgOne_x = -int(save_list[0])
-bgOne_y = -int(save_list[1])
+bgOne_x = -450
+bgOne_y = -400
 pygame.display.update()
 
 '''
