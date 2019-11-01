@@ -161,30 +161,28 @@ def game_exit():
 
 class castlebg(object):
     def __init__(self):
-        self.layers=[pygame.image.load('./castle entrance/layer{}.png'.format(x)) for x in range(1, 3)]
-        self.alayers=[pygame.image.load('./castle entrance/alayer{}.png'.format(x)) for x in range(1, 6)]
+        self.layers=[pygame.image.load('./castle entrance/layer{}.png'.format(x)) for x in range(1,6)]
         self.framecount=0
     
     def draw(self,win):
         if self.framecount+1>=15:
             self.framecount=0
-        win.blit(self.alayers[self.framecount//5],(0,0))
+        win.blit(self.layers[self.framecount//5],(0,0))
         self.framecount+=1
 
 def redrawgamewindow(score):
     # bg is the picture to be loaded in the level
     #win.fill(black)
     #win.blit(bgOne, (bgOne_x, bgOne_y))
-    win.blit(bg1.layers[0],(0,0))
-    win.blit(bg1.layers[1],(0,0))
-    p1.draw(win)
+    
     for i in enemies:
         i.draw(win)
     bg1.draw(win)
-    smallText = pygame.font.Font('freesansbold.ttf', 15)
-    TextSurf, TextRect = text_objects("Score: {}".format(score), smallText)
-    TextRect.center = (30,10)
-    win.blit(TextSurf, TextRect)
+    p1.draw(win)
+    # smallText = pygame.font.Font('freesansbold.ttf', 15)
+    # TextSurf, TextRect = text_objects("Score: {}".format(score), smallText)
+    # TextRect.center = (30,10)
+    # win.blit(TextSurf, TextRect)
 
     pygame.display.update()
 
@@ -495,18 +493,18 @@ def game_loop(score):
         if not (keys[pygame.K_UP] or keys[pygame.K_DOWN] or keys[pygame.K_LEFT] or keys[pygame.K_RIGHT] or p1.isatk):
             #if no key is pressed no movement
             p1.idle = True    
-        for i in enemies:
-            i.chase(p1)
-            if i.health<=0:
-              enemies.remove(i)
-              score+=1
-        if(len(enemies)==0):
-            enemies.append(goblin_str(800,random.randrange(710)))
-            enemies.append(goblin_str(0,random.randrange(710)))
+        # for i in enemies:
+        #     i.chase(p1)
+        #     if i.health<=0:
+        #       enemies.remove(i)
+        #       score+=1
+        # if(len(enemies)==0):
+        #     enemies.append(goblin_str(800,random.randrange(710)))
+        #     enemies.append(goblin_str(0,random.randrange(710)))
         redrawgamewindow(score)
-        if p1.atkcount//3==4:
-           for i in enemies:
-               p1.attack(i)
+        # if p1.atkcount//3==4:
+        #    for i in enemies:
+        #        p1.attack(i)
         #print(camera_x , camera_y , p1.x, p1.y)
     pygame.quit()
     quit()
@@ -514,10 +512,10 @@ def game_loop(score):
 
 # created the knight and time
 p1 = knight(250, 300, 64, 64)
-e1=goblin_str(800,800)
+#e1=goblin_str(800,800)
 bg1=castlebg()
 enemies=[]
-enemies.append(e1)
+#enemies.append(e1)
 clock = pygame.time.Clock()
 score=0
 
