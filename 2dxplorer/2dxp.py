@@ -186,10 +186,8 @@ def game_transition():
 
 class castlebg(object):
     def __init__(self):
-        self.layers = [pygame.image.load(
-            './castle entrance/layer{}.png'.format(x)) for x in range(1, 3)]
-        self.alayers = [pygame.image.load(
-            './castle entrance/alayer{}.png'.format(x)) for x in range(1, 6)]
+        self.layers = [pygame.image.load('./castle entrance/layer{}.png'.format(x)).convert_alpha() for x in range(1, 3)]
+        self.alayers = [pygame.image.load('./castle entrance/alayer{}.png'.format(x)).convert_alpha() for x in range(1, 6)]
         self.framecount = 0
 
     def draw(self, win):
