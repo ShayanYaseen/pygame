@@ -29,6 +29,11 @@ green = (0, 200, 0)
 bright_red = (255, 0, 100)
 bright_green = (20, 255, 100)
 
+
+#load sounds
+pygame.mixer_music.load('./sounds/music/main.mp3')
+attack1 = pygame.mixer.Sound('./sounds/effects/1.wav')
+
 # function to create text with font and color
 # get_rect Returns a new rectangle covering the entire surface
 
@@ -76,6 +81,7 @@ def game_paused():
 
 
 def game_intro():
+    pygame.mixer_music.play(-1)
     intro = True
     while intro:
         for event in pygame.event.get():
@@ -555,6 +561,7 @@ def game_loop(score):
         if keys[pygame.K_RIGHT] and keys[pygame.K_a]:
             camera_x += p1.vel
         if keys[pygame.K_z]:
+            pygame.mixer.Sound.play(attack1)
             p1.isatk = 1
             p1.idle = 0
         if not (keys[pygame.K_UP] or keys[pygame.K_DOWN] or keys[pygame.K_LEFT] or keys[pygame.K_RIGHT] or p1.isatk):
@@ -613,6 +620,7 @@ def game_loop_castle(score):
             p1.sprite_update(0, 1, 0, 0, 0)
 
         if keys[pygame.K_z]:
+            pygame.mixer.Sound.play(attack1)
             p1.isatk = 1
             p1.idle = 0
         if not (keys[pygame.K_UP] or keys[pygame.K_DOWN] or keys[pygame.K_LEFT] or keys[pygame.K_RIGHT] or p1.isatk):
@@ -643,7 +651,6 @@ enemies = []
 enemies.append(e1)
 clock = pygame.time.Clock()
 score = 0
-
 bgOne_x = -450
 bgOne_y = -400
 pygame.display.update()
