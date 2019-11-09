@@ -94,7 +94,7 @@ def game_intro():
         win.blit(game_intro_image, (0, 0))
 
         largeText = pygame.font.Font('freesansbold.ttf', 90)
-        smallText = pygame.font.Font('freesansbold.ttf', 15)
+        smallText = pygame.font.Font('freesansbold.ttf', 20)
 
         TextSurf, TextRect = text_objects("Legend of Zelda", largeText)
         pygame.draw.rect(win, black, (0, (disph/3.2), 900, 200))
@@ -146,6 +146,8 @@ def leaderboard_menu():
             f += 1
             win.blit(TextSurf, TextRect)
         pygame.display.update()
+        time.sleep(2)
+        intro = False
 
     game_intro()
 
@@ -168,10 +170,11 @@ def game_exit():
         TextRect.center = ((dispw/2), (disph/2))
         win.blit(TextSurf, TextRect)
         pygame.display.update()
-        time.sleep(0.5)
+        time.sleep(2)
+        intro = False
+    game_intro()
 
-
-def game_transition():
+def game_transition(s):
     intro = True
     while intro:
         for event in pygame.event.get():
@@ -182,11 +185,11 @@ def game_transition():
         pygame.display.update()
         largeText = pygame.font.Font('freesansbold.ttf', 30)
         TextSurf, TextRect = text_objects(
-            "You have now advanced to the final stage", largeText)
+            s, largeText)
         TextRect.center = ((dispw/2), (disph/2))
         win.blit(TextSurf, TextRect)
         pygame.display.update()
-        time.sleep(2)
+        time.sleep(1.5)
         intro = False
 
 
@@ -210,9 +213,9 @@ def redrawgamewindow(score):
     p1.draw(win)
     for i in enemies:
         i.draw(win)
-    smallText = pygame.font.Font('freesansbold.ttf', 15)
+    smallText = pygame.font.Font('freesansbold.ttf', 25)
     TextSurf, TextRect = text_objects("Score: {}".format(score), smallText)
-    TextRect.center = (30, 10)
+    TextRect.center = (70, 30)
     win.blit(TextSurf, TextRect)
     pygame.display.update()
 
@@ -491,6 +494,9 @@ class goblin_str(object):
 
 def game_loop(score):
     run = True
+    game_transition("Welcome")
+    game_transition("Move the player with the arrow buttons")
+    game_transition("Attack using the z button")
     while run:
         clock.tick(60)  # Games fps
         if(p1.health <= 0):
@@ -510,7 +516,7 @@ def game_loop(score):
         global bgOne_x, camera_x, bgOne_y, camera_y
 
         if score > 2:
-            game_transition()
+            game_transition("You have transitioned to castle")
             game_loop_castle(score)
 
         #CAMERA SCROLLING
@@ -584,6 +590,8 @@ def game_loop(score):
 
 def game_loop_castle(score):
     #bg1=castlebg()
+    p1.x = 350
+    p1.y = 668
     run = True
     while run:
         clock.tick(60)  # Games fps
@@ -656,6 +664,7 @@ pygame.display.update()
 '''
     main program starts here
 '''
+
 game_intro()
 #game_loop()
 #game_paused()
