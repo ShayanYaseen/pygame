@@ -6,6 +6,7 @@ import pygame
 import time
 import math
 import random
+import matplotlib.pyplot as plt
 
 # initialized the pygame module
 pygame.init()
@@ -123,6 +124,7 @@ def leaderboard_menu():
     while(intro):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                plt.close()
                 pygame.quit()
                 quit()
         pygame.display.update()
@@ -132,21 +134,37 @@ def leaderboard_menu():
         pygame.display.update()
         pygame.draw.rect(win, black, (0, (disph/6), 1100, 800))
         f = open("save.txt", "r")
+        stri = f.read()
         lb = list()
-        with open("save.txt", "r") as f:
-            lb = f.read().splitlines()
-        for x in range(0, len(lb)):
-            lb[x] = int(lb[x])
+        lb = [int(i) for i in stri.split()]
         lb.sort(reverse=True)
         f = 0
         #print(lb)
         for n in range(0, 10):
-            TextSurf, TextRect = text_objects(str(lb[n]), smallText)
+            s = str(lb[n])
+            TextSurf, TextRect = text_objects(s, smallText)
             TextRect.center = ((dispw/2), (170+f*50))
             f += 1
             win.blit(TextSurf, TextRect)
         pygame.display.update()
-        time.sleep(2)
+        y_l = list()
+        r = 0
+        for u in lb:
+            if r >= 10:
+                break
+            y_l.append(int(u))
+            r = r+1
+        y_l.sort(reverse=True)    
+        bins = [1,2,3,4,5,6,7,8,9,10]
+        plt.bar(y_l,bins)
+        plt.xlabel('Position')
+        plt.ylabel('Scores')
+        plt.title('Leaderboard \n Can you beat the high score?')
+        plt.legend()
+        plt.show(block=False)
+        plt.pause(3)
+        plt.close()
+        time.sleep(4)
         intro = False
 
     game_intro()
@@ -502,7 +520,6 @@ def game_loop(score):
         if(p1.health <= 0):
             f = open("save.txt", "a")
             f.write(str(score))
-            f.write("\n")
             game_exit()
 
         for event in pygame.event.get():
@@ -511,7 +528,6 @@ def game_loop(score):
                 #in a text file
                 f = open("save.txt", "a")
                 f.write(str(score))
-                f.write("\n")
                 run = False
         global bgOne_x, camera_x, bgOne_y, camera_y
 
@@ -598,7 +614,6 @@ def game_loop_castle(score):
         if(p1.health <= 0):
             f = open("save.txt", "a")
             f.write(str(score))
-            f.write("\n")
             game_exit()
 
         for event in pygame.event.get():
@@ -607,7 +622,6 @@ def game_loop_castle(score):
                 #in a text file
                 f = open("save.txt", "a")
                 f.write(str(score))
-                f.write("\n")
                 run = False
 
         keys = pygame.key.get_pressed()
