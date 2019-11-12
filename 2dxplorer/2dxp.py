@@ -171,7 +171,7 @@ def leaderboard_menu():
     game_intro()
 
 
-def game_exit():
+def game_exit(s):
     intro = True
     while intro:
         for event in pygame.event.get():
@@ -185,7 +185,7 @@ def game_exit():
         win.fill(black)
         pygame.display.update()
         largeText = pygame.font.Font('freesansbold.ttf', 60)
-        TextSurf, TextRect = text_objects("Game Over", largeText)
+        TextSurf, TextRect = text_objects(s, largeText)
         TextRect.center = ((dispw/2), (disph/2))
         win.blit(TextSurf, TextRect)
         pygame.display.update()
@@ -529,7 +529,7 @@ def game_loop(score):
         if(p1.health <= 0):
             f = open("save.txt", "a")
             f.write(str(score))
-            game_exit()
+            game_exit("Game Over")
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -623,7 +623,7 @@ def game_loop_castle(score):
         if(p1.health <= 0):
             f = open("save.txt", "a")
             f.write(str(score))
-            game_exit()
+            game_exit("Game Over")
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -676,7 +676,9 @@ def game_loop_castle(score):
            for i in enemies:
                p1.attack(i)
         if p1.y<270:
-            game_exit()
+            f = open("save.txt", "a")
+            f.write(str(score))
+            game_exit("You Won!")
 
         #print(camera_x , camera_y , p1.x, p1.y)
     pygame.quit()
