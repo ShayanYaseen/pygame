@@ -635,7 +635,7 @@ def game_loop_castle(score):
 
         keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_UP] and (p1.y > p1.vel + 32 and castle_col[((p1.y-p1.vel+p1.height)//16-1)%50][p1.x//16+2]==1 or (p1.y<350 and p1.opendoor==1)):
+        if keys[pygame.K_UP] and p1.y > p1.vel + 32 and castle_col[((p1.y-p1.vel+p1.height)//16-1)%50][p1.x//16+2]==1 and (p1.y>330 or (p1.y<340 and p1.opendoor)):
             p1.y -= p1.vel
             p1.sprite_update(0, 0, 0, 1, 0)
         if keys[pygame.K_DOWN] and p1.y < 800-p1.height-p1.vel and castle_col[((p1.y+p1.vel+p1.height)//16-1)%50][p1.x//16+2]==1:
@@ -675,7 +675,7 @@ def game_loop_castle(score):
         if p1.atkcount//3 == 4:
            for i in enemies:
                p1.attack(i)
-        if p1.y<300:
+        if p1.y<270:
             game_exit()
 
         #print(camera_x , camera_y , p1.x, p1.y)
