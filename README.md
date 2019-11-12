@@ -6,3 +6,8 @@ Most of the art is from opengameart.org
 Character and enemy sprites were made using a Universal LLC sprite generator.
 
 Music is ripped from similar games.
+
+![image](2dxplorer/summary/1.png)
+![image](2dxplorer/summary/2.png)
+![image](2dxplorer/summary/3.png)
+![image](2dxplorer/summary/4.png)
