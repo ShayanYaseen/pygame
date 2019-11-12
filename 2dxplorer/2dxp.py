@@ -245,7 +245,13 @@ def redrawgamewindow_castle(score):
     for i in enemies:
         i.draw(win)
     bg1.draw(win)
+    if score>=7 and p1.haskey==0 and p1.opendoor==0:
+        win.blit(key,(370,650))
+    if p1.opendoor==1:
+        win.blit(door,(0,0))
     p1.draw(win)
+    win.blit(archway,(0,0))
+
     smallText = pygame.font.Font('freesansbold.ttf', 15)
     TextSurf, TextRect = text_objects("Score: {}".format(score), smallText)
     TextRect.center = (30, 10)
@@ -272,6 +278,8 @@ class knight(object):
         self.isatk = False
         self.atkcount = 0
         self.curframe = None
+        self.haskey=0
+        self.opendoor=0
         # defined the sprites update for animation while walking right and left
         self.spr_walk_r = [pygame.image.load(
             './player/movement/right/{}.png'.format(x)) for x in range(1, 10)]
@@ -627,7 +635,7 @@ def game_loop_castle(score):
 
         keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_UP] and p1.y > p1.vel + 32 and castle_col[((p1.y-p1.vel+p1.height)//16-1)%50][p1.x//16+2]==1:
+        if keys[pygame.K_UP] and (p1.y > p1.vel + 32 and castle_col[((p1.y-p1.vel+p1.height)//16-1)%50][p1.x//16+2]==1 or (p1.y<350 and p1.opendoor==1)):
             p1.y -= p1.vel
             p1.sprite_update(0, 0, 0, 1, 0)
         if keys[pygame.K_DOWN] and p1.y < 800-p1.height-p1.vel and castle_col[((p1.y+p1.vel+p1.height)//16-1)%50][p1.x//16+2]==1:
@@ -647,18 +655,29 @@ def game_loop_castle(score):
         if not (keys[pygame.K_UP] or keys[pygame.K_DOWN] or keys[pygame.K_LEFT] or keys[pygame.K_RIGHT] or p1.isatk):
             #if no key is pressed no movement
             p1.idle = True
-        # for i in enemies:
-        #     i.chase(p1)
-        #     if i.health <= 0:
-        #       enemies.remove(i)
-        #       score += 1
-        if(len(enemies) == 0):
-            enemies.append(goblin_str(800, random.randrange(710)))
-            enemies.append(goblin_str(0, random.randrange(710)))
+        for i in enemies:
+             i.chase(p1)
+             if i.health <= 0:
+               enemies.remove(i)
+               score += 1
+        if len(enemies) == 0 and score<7:
+            enemies.append(goblin_str(800,800))
+            enemies.append(goblin_str(0,800))
+        
+        if score>=7 and p1.haskey==0:
+            if p1.x<370<p1.x+p1.width and p1.y<650<p1.y+p1.height:
+                p1.haskey=1
+
+        if p1.haskey==1 and 320<p1.x<390 and 330<p1.y<370:
+            p1.haskey=0
+            p1.opendoor=1
         redrawgamewindow_castle(score)
         if p1.atkcount//3 == 4:
            for i in enemies:
                p1.attack(i)
+        if p1.y<300:
+            game_exit()
+
         #print(camera_x , camera_y , p1.x, p1.y)
     pygame.quit()
     quit()
@@ -668,6 +687,9 @@ def game_loop_castle(score):
 p1 = knight(250, 300, 64, 64)
 e1 = goblin_str(800, 800)
 bg1 = castlebg()
+key = pygame.image.load('./png/key.png')
+door= pygame.image.load('./castle entrance/door.png').convert_alpha()
+archway=pygame.image.load('./castle entrance/archway.png').convert_alpha()
 enemies = []
 enemies.append(e1)
 clock = pygame.time.Clock()
