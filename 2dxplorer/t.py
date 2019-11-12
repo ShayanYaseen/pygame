@@ -1,6 +1,5 @@
-f = open("save.txt", "r")
-stri = f.read()
-lb = list()
-lb = [int(i) for i in stri.split()]
-lb.sort(reverse=True)
-print(str(lb[5]))
+f = open("save.txt", "a")
+for x in range(0,100):
+    s = str(x)
+    f.write(s) 
+    f.write(" ")

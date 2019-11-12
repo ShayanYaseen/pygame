@@ -157,7 +157,7 @@ def leaderboard_menu():
             r = r+1
         y_l.sort(reverse=True)    
         bins = [1,2,3,4,5,6,7,8,9,10]
-        plt.bar(y_l,bins)
+        plt.bar(bins,y_l)
         plt.xlabel('Position')
         plt.ylabel('Scores')
         plt.title('Leaderboard \n Can you beat the high score?')
