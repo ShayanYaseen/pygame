@@ -7,6 +7,7 @@ import time
 import math
 import random
 import matplotlib.pyplot as plt
+from castle_matrix import castle_col
 
 # initialized the pygame module
 pygame.init()
@@ -241,10 +242,10 @@ def redrawgamewindow(score):
 def redrawgamewindow_castle(score):
     win.blit(bg1.layers[0], (0, 0))
     win.blit(bg1.layers[1], (0, 0))
-    p1.draw(win)
     for i in enemies:
         i.draw(win)
     bg1.draw(win)
+    p1.draw(win)
     smallText = pygame.font.Font('freesansbold.ttf', 15)
     TextSurf, TextRect = text_objects("Score: {}".format(score), smallText)
     TextRect.center = (30, 10)
@@ -626,16 +627,16 @@ def game_loop_castle(score):
 
         keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_UP] and p1.y > p1.vel + 32:
+        if keys[pygame.K_UP] and p1.y > p1.vel + 32 and castle_col[((p1.y-p1.vel+p1.height)//16-1)%50][p1.x//16+2]==1:
             p1.y -= p1.vel
             p1.sprite_update(0, 0, 0, 1, 0)
-        if keys[pygame.K_DOWN] and p1.y < 734-p1.height-p1.vel:
+        if keys[pygame.K_DOWN] and p1.y < 800-p1.height-p1.vel and castle_col[((p1.y+p1.vel+p1.height)//16-1)%50][p1.x//16+2]==1:
             p1.y += p1.vel
             p1.sprite_update(0, 0, 0, 0, 1)
-        if keys[pygame.K_LEFT] and p1.x > p1.vel + 60:
+        if keys[pygame.K_LEFT] and p1.x > p1.vel and castle_col[((p1.y+p1.height)//16-1)%50][(p1.x-p1.vel)//16+2]==1:
             p1.x -= p1.vel
             p1.sprite_update(1, 0, 0, 0, 0)
-        if keys[pygame.K_RIGHT] and p1.x < 900-p1.width-p1.vel:
+        if keys[pygame.K_RIGHT] and p1.x < 800-p1.width-p1.vel and castle_col[((p1.y+p1.height)//16-1)%50][(p1.x+p1.vel)//16+2]==1:
             p1.x += p1.vel
             p1.sprite_update(0, 1, 0, 0, 0)
 
@@ -646,11 +647,11 @@ def game_loop_castle(score):
         if not (keys[pygame.K_UP] or keys[pygame.K_DOWN] or keys[pygame.K_LEFT] or keys[pygame.K_RIGHT] or p1.isatk):
             #if no key is pressed no movement
             p1.idle = True
-        for i in enemies:
-            i.chase(p1)
-            if i.health <= 0:
-              enemies.remove(i)
-              score += 1
+        # for i in enemies:
+        #     i.chase(p1)
+        #     if i.health <= 0:
+        #       enemies.remove(i)
+        #       score += 1
         if(len(enemies) == 0):
             enemies.append(goblin_str(800, random.randrange(710)))
             enemies.append(goblin_str(0, random.randrange(710)))
