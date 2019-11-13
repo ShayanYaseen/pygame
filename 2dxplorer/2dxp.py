@@ -252,9 +252,9 @@ def redrawgamewindow_castle(score):
     p1.draw(win)
     win.blit(archway,(0,0))
 
-    smallText = pygame.font.Font('freesansbold.ttf', 15)
+    smallText = pygame.font.Font('freesansbold.ttf', 25)
     TextSurf, TextRect = text_objects("Score: {}".format(score), smallText)
-    TextRect.center = (30, 10)
+    TextRect.center = (70, 30)
     win.blit(TextSurf, TextRect)
     pygame.display.update()
 
@@ -660,7 +660,7 @@ def game_loop_castle(score):
              if i.health <= 0:
                enemies.remove(i)
                score += 1
-        if len(enemies) == 0 and score<7:
+        if len(enemies) == 0:
             enemies.append(goblin_str(800,800))
             enemies.append(goblin_str(0,800))
         
