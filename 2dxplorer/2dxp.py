@@ -161,7 +161,6 @@ def leaderboard_menu():
         plt.xlabel('Position')
         plt.ylabel('Scores')
         plt.title('Leaderboard \n Can you beat the high score?')
-        plt.legend()
         plt.show(block=False)
         plt.pause(3)
         plt.close()
