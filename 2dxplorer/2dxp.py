@@ -47,7 +47,7 @@ def text_objects(text, font):
 # game intro menu that appears for the first time
 # game is loaded
 
-
+#function for making buttons attributes are the messafe x,y the location of the button next 4 are button size
 def button(msg, x, y, w, h, i, a, action=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
@@ -67,7 +67,7 @@ def button(msg, x, y, w, h, i, a, action=None):
     TextRect.center = ((x+(w/2)), (y+h/2))
     win.blit(TextSurf, TextRect)
 
-
+#menu when game is paused
 def game_paused():
     intro = True
     while intro:
@@ -169,7 +169,7 @@ def leaderboard_menu():
 
     game_intro()
 
-
+#game exit menu whith messafge s
 def game_exit(s):
     intro = True
     while intro:
@@ -192,6 +192,7 @@ def game_exit(s):
         intro = False
     game_intro()
 
+#transition when map
 def game_transition(s):
     intro = True
     while intro:
@@ -517,7 +518,7 @@ class goblin_str(object):
                elif self.y+self.curframe.get_height()+self.height > p1.y > self.y:
                   p1.health -= 20
 
-
+#main game loop 
 def game_loop(score):
     run = True
     game_transition("Welcome")
